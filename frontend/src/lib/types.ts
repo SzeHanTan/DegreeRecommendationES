@@ -22,11 +22,6 @@ export interface Answer {
   value: string | string[];
 }
 
-export interface AssessmentPayload {
-  name: string;
-  answers: Answer[];
-}
-
 // ─── Recommendation Types ─────────────────────────────────────────────────────
 
 export interface RuleFired {
@@ -37,18 +32,11 @@ export interface RuleFired {
 
 export interface DegreeRecommendation {
   degree: string;
+  degreeId: string;
   score: number;
   maxScore: number;
   percentage: number;
   rulesFired: RuleFired[];
   explanation: string;
   careerPaths: string[];
-}
-
-export interface RecommendationResult {
-  sessionId: string;
-  name: string;
-  recommendations: DegreeRecommendation[];
-  attributeSummary: Record<string, boolean>;
-  createdAt: string;
 }
