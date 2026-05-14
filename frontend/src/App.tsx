@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import LandingPage from './pages/LandingPage';
@@ -15,6 +15,9 @@ export default function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/assessment" element={<QuestionnairePage />} />
             <Route path="/results/:sessionId" element={<ResultsPage />} />
+            {/* Redirect bare /results and any unknown paths to home */}
+            <Route path="/results" element={<Navigate to="/results/demo" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
         <Footer />

@@ -87,9 +87,9 @@ API docs at `http://localhost:8000/docs`
 | Inference Engine | Pending |
 | Backend API | Pending |
 | Database | Pending |
-| Frontend — Landing | Pending |
-| Frontend — Questionnaire | Pending |
-| Frontend — Results | Pending |
+| Frontend — Landing | Done |
+| Frontend — Questionnaire | Done |
+| Frontend — Results | Done |
 
 ---
 
