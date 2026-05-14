@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { fetchRecommendations } from '../lib/api';
-import type { RecommendationResult } from '../lib/types';
+import { useMemo } from 'react';
+import { Link, useLocation, Navigate } from 'react-router-dom';
+import type { DegreeRecommendation } from '../lib/types';
 import RecommendationCard from '../components/ui/RecommendationCard';
 import ScoreBar from '../components/ui/ScoreBar';
 
@@ -11,135 +10,28 @@ const imgBrainIcon =
 const imgCircuitBoard =
   'https://www.figma.com/api/mcp/asset/f7bf69d6-50f5-46ff-9bd6-8096e7ba639f';
 
-// ── Demo data (used when sessionId === "demo", backend not yet wired) ──────────
-const DEMO_RESULT: RecommendationResult = {
-  sessionId: 'demo',
-  name: 'Demo Student',
-  recommendations: [
-    {
-      degree: 'Computer Science',
-      score: 85,
-      maxScore: 100,
-      percentage: 85,
-      rulesFired: [
-        { ruleId: 'CS-01', description: 'Strong mathematics and enjoys problem solving', pointsAdded: 30 },
-        { ruleId: 'CS-02', description: 'High interest in technology and computing', pointsAdded: 20 },
-        { ruleId: 'CS-03', description: 'Analytical and logical thinking style', pointsAdded: 20 },
-        { ruleId: 'CS-04', description: 'Prefers building and engineering solutions', pointsAdded: 15 },
-      ],
-      explanation:
-        'Your strong analytical mindset and interest in technology indicate a natural fit for Computer Science. Your preference for logical problem-solving and building systems aligns well with the core curriculum and career outcomes of this programme. Students with your profile consistently excel in algorithm design, software engineering, and systems thinking.',
-      careerPaths: ['Software Engineer', 'Data Scientist', 'Systems Architect'],
-    },
-    {
-      degree: 'Data Science',
-      score: 72,
-      maxScore: 100,
-      percentage: 72,
-      rulesFired: [
-        { ruleId: 'DS-01', description: 'Strong mathematics background', pointsAdded: 30 },
-        { ruleId: 'DS-02', description: 'Enjoys research and investigation', pointsAdded: 20 },
-        { ruleId: 'DS-03', description: 'Logical and critical thinking', pointsAdded: 22 },
-      ],
-      explanation:
-        'Your mathematical strength and research interest align well with Data Science.',
-      careerPaths: ['Data Analyst', 'ML Engineer', 'Research Scientist'],
-    },
-    {
-      degree: 'Information Technology',
-      score: 58,
-      maxScore: 100,
-      percentage: 58,
-      rulesFired: [
-        { ruleId: 'IT-01', description: 'Interest in technology', pointsAdded: 20 },
-        { ruleId: 'IT-02', description: 'Logical thinking style', pointsAdded: 20 },
-        { ruleId: 'IT-03', description: 'Detail-oriented personality', pointsAdded: 18 },
-      ],
-      explanation:
-        'Your interest in technology and structured thinking fits IT management well.',
-      careerPaths: ['IT Consultant', 'Network Administrator', 'Systems Analyst'],
-    },
-  ],
-  attributeSummary: {
-    strong_math: true,
-    analytical: true,
-    interest_technology: true,
-    enjoys_problem_solving: true,
-    logical_thinking: true,
-    creative: false,
-    interest_helping_others: false,
-  },
-  createdAt: new Date().toISOString(),
-};
-
-// ── Loading ────────────────────────────────────────────────────────────────────
-
-function LoadingView() {
-  return (
-    <div className="bg-cream min-h-full flex items-center justify-center">
-      <span className="font-code text-ink text-[14px] tracking-[1.2px]">
-        {'> ANALYSING YOUR PROFILE...'}
-      </span>
-    </div>
-  );
-}
-
-// ── Error ──────────────────────────────────────────────────────────────────────
-
-function ErrorView({ message }: { message: string }) {
-  return (
-    <div className="bg-cream min-h-full flex flex-col items-center justify-center gap-6">
-      <p className="font-code text-sticker-red text-[14px] tracking-[1.2px]">
-        {`> ERROR: ${message}`}
-      </p>
-      <div className="flex items-center gap-4">
-        <Link to="/assessment">
-          <button className="bg-ink text-cream font-code text-[14px] px-8 py-4 drop-shadow-[4px_4px_0px_#1c1c13] cursor-pointer">
-            Start New Assessment
-          </button>
-        </Link>
-        <Link to="/results/demo">
-          <button className="border border-ink font-code text-[14px] px-8 py-4 cursor-pointer hover:bg-cream-light transition-colors text-ink">
-            View Demo
-          </button>
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 // ── Main Page ──────────────────────────────────────────────────────────────────
 
 export default function ResultsPage() {
-  const { sessionId } = useParams<{ sessionId: string }>();
-  const [result, setResult] = useState<RecommendationResult | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const location = useLocation();
+  const { results, name } = (location.state ?? {}) as {
+    results?: DegreeRecommendation[];
+    name?: string;
+  };
 
-  useEffect(() => {
-    if (!sessionId) {
-      setError('No session ID provided.');
-      setLoading(false);
-      return;
-    }
-    // Demo mode — preview page without a running backend
-    if (sessionId === 'demo') {
-      setResult(DEMO_RESULT);
-      setLoading(false);
-      return;
-    }
-    fetchRecommendations(sessionId)
-      .then(setResult)
-      .catch((err: Error) => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [sessionId]);
+  // Stable display-only sequence tag
+  const seqTag = useMemo(() => {
+    const chars = 'ABCDEF0123456789';
+    return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+  }, []);
 
-  if (loading) return <LoadingView />;
-  if (error || !result) return <ErrorView message={error ?? 'Failed to load results.'} />;
+  // If no results in state, redirect back to the assessment
+  if (!results || results.length === 0) {
+    return <Navigate to="/assessment" replace />;
+  }
 
-  const top = result.recommendations[0];
-  const others = result.recommendations.slice(1, 3);
-  const seqTag = (sessionId ?? 'UNKNOWN').slice(0, 8).toUpperCase();
+  const top = results[0];
+  const others = results.slice(1, 3);
 
   return (
     <div className="bg-cream min-h-full">
@@ -199,7 +91,7 @@ export default function ResultsPage() {
               </div>
 
               <div className="flex flex-col gap-4 pb-4">
-                {result.recommendations.slice(0, 3).map((rec, i) => (
+                {results.slice(0, 3).map((rec, i) => (
                   <ScoreBar
                     key={rec.degree}
                     label={`#${i + 1} ${rec.degree}`}
@@ -327,16 +219,16 @@ export default function ResultsPage() {
                   </span>
                   <div className="flex flex-col">
                     <span className="font-code text-ink text-[12px] leading-[15px]">
-                      Session: {(sessionId ?? 'N/A').slice(0, 12)}
+                      Session: {seqTag.slice(0, 12)}
                     </span>
                     <span className="font-code text-ink text-[12px] leading-[15px]">
                       Status: OPERATIONAL
                     </span>
                     <span className="font-code text-ink text-[12px] leading-[15px]">
-                      Matches: {result.recommendations.length}
+                      Matches: {results.length}
                     </span>
                     <span className="font-code text-ink text-[12px] leading-[15px]">
-                      Name: {result.name}
+                      Name: {name ?? 'Student'}
                     </span>
                   </div>
                   <div className="flex gap-1 items-center">
@@ -372,7 +264,7 @@ export default function ResultsPage() {
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-[#22c55e] shadow-[0px_0px_5px_0px_rgba(34,197,94,0.5)]" />
             <span className="font-code text-muted text-[12px] tracking-[1.2px]">
-              ASSESSMENT FINALISED FOR {result.name.toUpperCase()}
+              ASSESSMENT FINALISED FOR {(name ?? 'STUDENT').toUpperCase()}
             </span>
           </div>
           <Link to="/assessment">

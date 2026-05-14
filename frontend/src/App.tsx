@@ -14,9 +14,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/assessment" element={<QuestionnairePage />} />
-            <Route path="/results/:sessionId" element={<ResultsPage />} />
-            {/* Redirect bare /results and any unknown paths to home */}
-            <Route path="/results" element={<Navigate to="/results/demo" replace />} />
+            <Route path="/results" element={<ResultsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

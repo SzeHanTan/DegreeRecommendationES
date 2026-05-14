@@ -1,132 +1,8 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchQuestions, submitAssessment } from '../lib/api';
+import { QUESTIONS } from '../kb/questions';
+import { runInference } from '../engine/inferenceEngine';
 import type { Answer, Question } from '../lib/types';
-
-// ── Fallback questions (used when API returns empty or is unavailable) ─────────
-// Option IDs mirror the attribute keys defined in backend/app/kb/questions.py
-const LOCAL_QUESTIONS: Question[] = [
-  {
-    id: 'q_subject',
-    category: 'subject',
-    text: 'Which of these subjects interests you the most?',
-    type: 'single',
-    options: [
-      { id: 'strong_math', label: 'Mathematics' },
-      { id: 'strong_biology', label: 'Biology' },
-      { id: 'interest_technology', label: 'Computer Science' },
-      { id: 'interest_art', label: 'Creative Arts' },
-    ],
-  },
-  {
-    id: 'q_academic',
-    category: 'academic',
-    text: 'Which subject were you strongest in at school?',
-    type: 'single',
-    options: [
-      { id: 'strong_math', label: 'Mathematics' },
-      { id: 'strong_biology', label: 'Life Sciences' },
-      { id: 'strong_physics', label: 'Physics' },
-      { id: 'strong_accounts', label: 'Accounting / Economics' },
-    ],
-  },
-  {
-    id: 'q_career',
-    category: 'interest',
-    text: 'What kind of career environment appeals most to you?',
-    type: 'single',
-    options: [
-      { id: 'interest_technology', label: 'Technology & Research' },
-      { id: 'interest_helping_others', label: 'Healthcare & Social Work' },
-      { id: 'interest_business', label: 'Business & Management' },
-      { id: 'interest_media', label: 'Media & Creative Arts' },
-    ],
-  },
-  {
-    id: 'q_activity',
-    category: 'interest',
-    text: 'Which of these activities sounds most enjoyable?',
-    type: 'single',
-    options: [
-      { id: 'enjoys_problem_solving', label: 'Building or programming things' },
-      { id: 'interest_helping_others', label: 'Helping or caring for others' },
-      { id: 'interest_business', label: 'Organising or leading projects' },
-      { id: 'artistic_expression', label: 'Designing or performing' },
-    ],
-  },
-  {
-    id: 'q_thinking',
-    category: 'personality',
-    text: 'How would you best describe your thinking style?',
-    type: 'single',
-    options: [
-      { id: 'analytical', label: 'Analytical & logical' },
-      { id: 'creative', label: 'Creative & imaginative' },
-      { id: 'empathetic', label: 'Empathetic & people-focused' },
-      { id: 'detail_oriented', label: 'Structured & detail-oriented' },
-    ],
-  },
-  {
-    id: 'q_team_role',
-    category: 'personality',
-    text: 'In a group project, which role comes most naturally to you?',
-    type: 'single',
-    options: [
-      { id: 'enjoys_problem_solving', label: 'The technical problem-solver' },
-      { id: 'leadership_oriented', label: 'The organiser and leader' },
-      { id: 'verbal_communication', label: 'The communicator and presenter' },
-      { id: 'creative', label: 'The idea generator and designer' },
-    ],
-  },
-  {
-    id: 'q_skill',
-    category: 'personality',
-    text: 'Which skill feels most natural to you?',
-    type: 'single',
-    options: [
-      { id: 'logical_thinking', label: 'Logical & critical thinking' },
-      { id: 'enjoys_research', label: 'Research & investigation' },
-      { id: 'written_communication', label: 'Writing & storytelling' },
-      { id: 'artistic_expression', label: 'Visual & artistic creation' },
-    ],
-  },
-  {
-    id: 'q_science',
-    category: 'subject',
-    text: 'Which area of science excites you most?',
-    type: 'single',
-    options: [
-      { id: 'strong_math', label: 'Mathematics & Computing' },
-      { id: 'strong_biology', label: 'Biology & Life Sciences' },
-      { id: 'strong_chemistry', label: 'Chemistry & Materials' },
-      { id: 'strong_physics', label: 'Physics & Engineering' },
-    ],
-  },
-  {
-    id: 'q_impact',
-    category: 'interest',
-    text: 'What type of impact do you most want to make?',
-    type: 'single',
-    options: [
-      { id: 'interest_technology', label: 'Advance technology & innovation' },
-      { id: 'interest_helping_others', label: 'Improve health & communities' },
-      { id: 'interest_business', label: 'Drive economic growth' },
-      { id: 'interest_science', label: 'Expand scientific knowledge' },
-    ],
-  },
-  {
-    id: 'q_challenge',
-    category: 'academic',
-    text: 'Which challenge would you find most rewarding?',
-    type: 'single',
-    options: [
-      { id: 'enjoys_problem_solving', label: 'Designing software or systems' },
-      { id: 'strong_biology', label: 'Diagnosing and treating illness' },
-      { id: 'interest_business', label: 'Building and scaling a company' },
-      { id: 'enjoys_research', label: 'Conducting scientific experiments' },
-    ],
-  },
-];
 
 // Retro block ID derived from question index for decorative display
 function toBlockId(index: number) {
@@ -242,8 +118,7 @@ function QuestionStep({
 export default function QuestionnairePage() {
   const navigate = useNavigate();
 
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [loading, setLoading] = useState(true);
+  const questions: Question[] = QUESTIONS;
 
   const [onNameStep, setOnNameStep] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -259,13 +134,6 @@ export default function QuestionnairePage() {
       'SYS-' +
       Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
     );
-  }, []);
-
-  useEffect(() => {
-    fetchQuestions()
-      .then((qs) => setQuestions(qs.length ? qs : LOCAL_QUESTIONS))
-      .catch(() => setQuestions(LOCAL_QUESTIONS))
-      .finally(() => setLoading(false));
   }, []);
 
   const totalQuestions = questions.length;
@@ -316,20 +184,17 @@ export default function QuestionnairePage() {
     }
   }
 
-  async function handleSubmit() {
+  function handleSubmit() {
     setSubmitting(true);
     setSubmitError(null);
     try {
       const answersArr: Answer[] = Object.entries(answers).map(
         ([questionId, value]) => ({ questionId, value }),
       );
-      const { sessionId } = await submitAssessment({
-        name: userName.trim(),
-        answers: answersArr,
-      });
-      navigate(`/results/${sessionId}`);
+      const results = runInference(answersArr);
+      navigate('/results', { state: { results, name: userName.trim() } });
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Submission failed');
+      setSubmitError(err instanceof Error ? err.message : 'Inference failed');
       setSubmitting(false);
     }
   }
@@ -339,17 +204,6 @@ export default function QuestionnairePage() {
     : isLastQuestion
       ? 'FINALIZING'
       : 'EVALUATION_IN_PROGRESS';
-
-  // ── Loading ────────────────────────────────────────────────────────────────
-  if (loading) {
-    return (
-      <div className="bg-[#fdfaea] min-h-full flex items-center justify-center">
-        <span className="font-code text-ink text-[14px] tracking-[1.2px]">
-          {'> LOADING QUESTIONNAIRE...'}
-        </span>
-      </div>
-    );
-  }
 
   // ── Page ───────────────────────────────────────────────────────────────────
   return (

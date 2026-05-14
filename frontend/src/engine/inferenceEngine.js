@@ -108,9 +108,9 @@ export function runInference(answers) {
     };
   });
 
-  // Sort descending by score, then return top 3
+  // Sort descending by percentage (normalised score), then return top 3
   return results
     .filter((r) => r.score > 0)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => b.percentage - a.percentage)
     .slice(0, 3);
 }
