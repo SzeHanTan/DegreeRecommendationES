@@ -20,3 +20,9 @@ Thumbs.db
 
 # Cursor 
 .cursor
+
+# local-only content
+docs/slides.md
+ppt/
+.agents/
+skills-lock.json
