@@ -63,7 +63,7 @@ export default function ResultsPage() {
   // Stable display-only sequence tag
   const seqTag = useMemo(() => {
     const chars = 'ABCDEF0123456789';
-    return Array.from({ length: 8 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    return Array.from({ length: 16 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
   }, []);
 
   // If no results in state, redirect back to the assessment
@@ -161,7 +161,7 @@ export default function ResultsPage() {
               </h2>
 
               <div className="flex flex-col gap-4 max-w-[672px]">
-                <p className="font-body text-ink text-[18px] leading-[28.8px]">
+                <p className="font-body text-ink text-[18px] leading-[28.8px] whitespace-pre-line">
                   {top.explanation}
                 </p>
 

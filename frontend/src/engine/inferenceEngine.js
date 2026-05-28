@@ -87,7 +87,9 @@ export function runInference(answers) {
   const results = DEGREES.map((degree) => {
     const score = scoreMap[degree.id];
     const max = maxPossible[degree.id] || 1;
-    const percentage = Math.round((score / max) * 100);
+    const maxPos = maxPossible[degree.id] || 1;
+    let percentage = (score / maxPos) * 100;
+    percentage = Math.min(Math.max(percentage, 0), 100);
     const rulesFired = traceMap[degree.id];
 
     const explanationLines = rulesFired.map((r) => `• ${r.description}`);
@@ -110,7 +112,15 @@ export function runInference(answers) {
 
   // Sort descending by percentage (normalised score), then return top 3
   return results
-    .filter((r) => r.score > 0)
-    .sort((a, b) => b.percentage - a.percentage)
-    .slice(0, 3);
+  .filter((r) => r.score > 0)
+  .sort((a, b) => {
+    if (b.percentage !== a.percentage) {
+      return b.percentage - a.percentage;
+    }
+    if (b.rulesFired.length !== a.rulesFired.length) {
+      return b.rulesFired.length - a.rulesFired.length;
+    }
+    return a.degree.localeCompare(b.degree);
+  })
+  .slice(0, 3);
 }
