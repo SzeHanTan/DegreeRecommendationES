@@ -1,9 +1,112 @@
 import { Link } from 'react-router-dom';
 
-const imgIconAssessment = 'https://www.figma.com/api/mcp/asset/580e4c0f-b2be-4685-adeb-e4eac642cc33';
-const imgIconKnowledge = 'https://www.figma.com/api/mcp/asset/76acccb5-5709-4b2c-b3c9-38bfbba7b84b';
-const imgIconResults = 'https://www.figma.com/api/mcp/asset/f8b0c988-40c9-44fc-a13e-6a1bdd17c857';
-const imgCircuitry = 'https://www.figma.com/api/mcp/asset/9baf493f-e055-4cdf-981a-413530596e7a';
+const IconAssessment = () => (
+  <svg viewBox="0 0 32 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-auto">
+    <rect x="1" y="1" width="30" height="28" rx="1" stroke="#1c1c13" strokeWidth="1.5"/>
+    <line x1="7" y1="8" x2="25" y2="8" stroke="#1c1c13" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="7" y1="13" x2="25" y2="13" stroke="#1c1c13" strokeWidth="1.5" strokeLinecap="round"/>
+    <line x1="7" y1="18" x2="18" y2="18" stroke="#1c1c13" strokeWidth="1.5" strokeLinecap="round"/>
+    <polyline points="20,22 23,25 28,19" stroke="#1c1c13" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+const IconKnowledge = () => (
+  <svg viewBox="0 0 32 27" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-auto">
+    <ellipse cx="16" cy="5" rx="14" ry="4" stroke="#1c1c13" strokeWidth="1.5"/>
+    <path d="M2 5v6c0 2.21 6.268 4 14 4s14-1.79 14-4V5" stroke="#1c1c13" strokeWidth="1.5"/>
+    <path d="M2 11v6c0 2.21 6.268 4 14 4s14-1.79 14-4v-6" stroke="#1c1c13" strokeWidth="1.5"/>
+    <path d="M2 17v4c0 2.21 6.268 4 14 4s14-1.79 14-4v-4" stroke="#1c1c13" strokeWidth="1.5"/>
+  </svg>
+);
+
+const IconResults = () => (
+  <svg viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-auto">
+    <rect x="1" y="14" width="6" height="9" stroke="#1c1c13" strokeWidth="1.5"/>
+    <rect x="9" y="8" width="6" height="15" stroke="#1c1c13" strokeWidth="1.5"/>
+    <rect x="17" y="1" width="6" height="22" fill="#1c1c13"/>
+    <rect x="25" y="5" width="6" height="18" stroke="#1c1c13" strokeWidth="1.5"/>
+  </svg>
+);
+
+/**
+ * Rule inference tree — visually represents the expert system guiding a student
+ * from a single input through branching rules to degree outcomes.
+ * Layout: input node → 3 rule diamonds → 5 degree leaf nodes (left→right)
+ */
+const RuleTreeBg = () => (
+  <svg viewBox="0 0 620 256" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 w-full h-full">
+    <g stroke="#e8e4d9" strokeWidth="1.5" opacity="0.9">
+
+      {/* ── Input node (left) ─────────────────────── */}
+      <rect x="20" y="108" width="72" height="40" rx="2" strokeWidth="1.5"/>
+      <text x="56" y="123" textAnchor="middle" fontFamily="monospace" fontSize="7" fill="#e8e4d9" opacity="0.7">STUDENT</text>
+      <text x="56" y="134" textAnchor="middle" fontFamily="monospace" fontSize="7" fill="#e8e4d9" opacity="0.7">PROFILE</text>
+
+      {/* ── Trunk line ────────────────────────────── */}
+      <line x1="92" y1="128" x2="148" y2="128"/>
+
+      {/* ── Rule engine hub ───────────────────────── */}
+      {/* diamond: centre (170,128), half-width 22, half-height 18 */}
+      <polygon points="148,128 170,110 192,128 170,146" strokeWidth="1.5"/>
+      <text x="170" y="131" textAnchor="middle" fontFamily="monospace" fontSize="6" fill="#e8e4d9" opacity="0.7">RULES</text>
+
+      {/* ── Branch stems from hub ─────────────────── */}
+      {/* top branch → y=44 */}
+      <path d="M192,128 H220 V44 H268" strokeWidth="1.2"/>
+      {/* upper-mid branch → y=88 */}
+      <path d="M192,128 H220 V88 H268" strokeWidth="1.2"/>
+      {/* centre branch → y=128 */}
+      <line x1="192" y1="128" x2="268" y2="128"/>
+      {/* lower-mid branch → y=168 */}
+      <path d="M192,128 H220 V168 H268" strokeWidth="1.2"/>
+      {/* bottom branch → y=212 */}
+      <path d="M192,128 H220 V212 H268" strokeWidth="1.2"/>
+
+      {/* ── Secondary rule diamonds ───────────────── */}
+      {/* upper cluster hub at (290, 66) */}
+      <polygon points="268,66 290,50 312,66 290,82" strokeWidth="1.2" opacity="0.7"/>
+      {/* lower cluster hub at (290, 190) */}
+      <polygon points="268,190 290,174 312,190 290,206" strokeWidth="1.2" opacity="0.7"/>
+
+      {/* Lines from upper hub to top two leaves */}
+      <path d="M312,66 H340 V44 H388" strokeWidth="1.2" opacity="0.7"/>
+      <path d="M312,66 H340 V88 H388" strokeWidth="1.2" opacity="0.7"/>
+      {/* Centre leaf direct */}
+      <line x1="312" y1="128" x2="388" y2="128" strokeWidth="1.2" opacity="0.7"/>
+      {/* Lines from lower hub to bottom two leaves */}
+      <path d="M312,190 H340 V168 H388" strokeWidth="1.2" opacity="0.7"/>
+      <path d="M312,190 H340 V212 H388" strokeWidth="1.2" opacity="0.7"/>
+
+      {/* ── Degree leaf nodes ─────────────────────── */}
+      {[44, 88, 128, 168, 212].map((y, i) => (
+        <g key={i}>
+          <rect x="388" y={y - 18} width="110" height="36" rx="2" strokeWidth="1.5"/>
+          <text x="443" y={y - 4} textAnchor="middle" fontFamily="monospace" fontSize="6.5" fill="#e8e4d9" opacity="0.55">
+            {['ACCOUNTING','COMPUTER SCI','ENGINEERING','MEDICINE','MULTIMEDIA'][i]}
+          </text>
+          <text x="443" y={y + 8} textAnchor="middle" fontFamily="monospace" fontSize="5.5" fill="#e8e4d9" opacity="0.35">
+            {['DEGREE PATHWAY','DEGREE PATHWAY','DEGREE PATHWAY','DEGREE PATHWAY','DEGREE PATHWAY'][i]}
+          </text>
+          {/* match score pill */}
+          <rect x="508" y={y - 10} width="28" height="14" rx="1" fill="#e8e4d9" opacity="0.15"/>
+          <text x="522" y={y + 1} textAnchor="middle" fontFamily="monospace" fontSize="6" fill="#e8e4d9" opacity="0.5">
+            {['87%','74%','68%','55%','49%'][i]}
+          </text>
+        </g>
+      ))}
+
+      {/* ── Trailing lines off right edge ─────────── */}
+      {[44, 88, 128, 168, 212].map((y, i) => (
+        <line key={i} x1="498" y1={y} x2="540" y2={y} strokeWidth="1" opacity="0.25"/>
+      ))}
+
+      {/* ── Decorative tick marks on trunk ────────── */}
+      <line x1="120" y1="124" x2="120" y2="132" strokeWidth="1" opacity="0.4"/>
+      <line x1="136" y1="124" x2="136" y2="132" strokeWidth="1" opacity="0.4"/>
+
+    </g>
+  </svg>
+);
 
 const SPECS = [
   { label: 'PROCESSOR', value: 'Rule Engine' },
@@ -14,7 +117,7 @@ const SPECS = [
 
 const FEATURES = [
   {
-    icon: imgIconAssessment,
+    Icon: IconAssessment,
     iconHeight: 'h-[30px]',
     title: 'Personalised Assessment',
     description:
@@ -22,7 +125,7 @@ const FEATURES = [
     featured: false,
   },
   {
-    icon: imgIconKnowledge,
+    Icon: IconKnowledge,
     iconHeight: 'h-[27px]',
     title: 'Knowledge-Driven',
     description:
@@ -30,7 +133,7 @@ const FEATURES = [
     featured: true,
   },
   {
-    icon: imgIconResults,
+    Icon: IconResults,
     iconHeight: 'h-[24px]',
     title: 'Clear Recommendations',
     description:
@@ -221,7 +324,7 @@ export default function LandingPage() {
         </div>
 
         <div className="grid grid-cols-3 gap-8">
-          {FEATURES.map(({ icon, iconHeight, title, description, featured }) => (
+          {FEATURES.map(({ Icon, iconHeight, title, description, featured }) => (
             <div
               key={title}
               className={[
@@ -231,12 +334,8 @@ export default function LandingPage() {
                   : 'bg-cream-light',
               ].join(' ')}
             >
-              <div className={`${iconHeight} w-full relative shrink-0`}>
-                <img
-                  alt=""
-                  className="absolute inset-0 w-full h-full object-contain object-left"
-                  src={icon}
-                />
+              <div className={`${iconHeight} w-full flex items-start shrink-0`}>
+                <Icon />
               </div>
               <div className="pt-4 border-b border-border pb-[9px]">
                 <h3 className="font-code font-bold text-ink text-[18px] leading-[27px]">
@@ -266,13 +365,8 @@ export default function LandingPage() {
               BUILT FOR STUDENTS
             </p>
           </div>
-          <div className="flex-1 h-[256px] min-w-0 opacity-60 border border-[#1c1b1b] relative overflow-hidden">
-            <img
-              alt=""
-              className="absolute w-full h-auto top-[-60%] left-0 max-w-none"
-              src={imgCircuitry}
-            />
-            <div className="absolute inset-0 bg-white mix-blend-saturation" />
+          <div className="flex-1 h-[256px] min-w-0 opacity-70 border border-[rgba(232,228,217,0.15)] relative overflow-hidden">
+            <RuleTreeBg />
           </div>
         </div>
       </section>

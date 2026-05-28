@@ -4,11 +4,52 @@ import type { DegreeRecommendation } from '../lib/types';
 import RecommendationCard from '../components/ui/RecommendationCard';
 import ScoreBar from '../components/ui/ScoreBar';
 
-// Decorative assets from Figma design
-const imgBrainIcon =
-  'https://www.figma.com/api/mcp/asset/cf193a07-7eb3-4a88-8f28-06157975b823';
-const imgCircuitBoard =
-  'https://www.figma.com/api/mcp/asset/f7bf69d6-50f5-46ff-9bd6-8096e7ba639f';
+/** Decorative icon for "Why this fits you" — person silhouette with a checkmark */
+const FitIcon = () => (
+  <svg viewBox="0 0 67 69" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute top-0 right-0 h-[69px] w-[67px] pointer-events-none opacity-30">
+    {/* Head */}
+    <circle cx="33" cy="20" r="10" stroke="#1c1c13" strokeWidth="2"/>
+    {/* Shoulders / body arc */}
+    <path d="M8 62c0-13.807 11.193-25 25-25s25 11.193 25 25" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    {/* Checkmark badge (bottom-right) */}
+    <circle cx="52" cy="54" r="10" fill="#1c1c13"/>
+    <polyline points="46,54 50,58 58,49" stroke="#e8e4d9" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+);
+
+/** Thumbnail for ANALYSIS_COMPLETE — CPU chip icon */
+const ChipThumb = () => (
+  <svg viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg" className="absolute inset-0 w-full h-full">
+    <rect width="90" height="90" fill="#e8e4d9"/>
+    {/* Chip body */}
+    <rect x="24" y="24" width="42" height="42" rx="3" stroke="#1c1c13" strokeWidth="2"/>
+    {/* Inner die */}
+    <rect x="33" y="33" width="24" height="24" rx="1" fill="#1c1c13" opacity="0.12"/>
+    <rect x="33" y="33" width="24" height="24" rx="1" stroke="#1c1c13" strokeWidth="1.5"/>
+    {/* Top pins */}
+    <line x1="33" y1="24" x2="33" y2="16" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="41" y1="24" x2="41" y2="16" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="49" y1="24" x2="49" y2="16" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="57" y1="24" x2="57" y2="16" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    {/* Bottom pins */}
+    <line x1="33" y1="66" x2="33" y2="74" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="41" y1="66" x2="41" y2="74" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="49" y1="66" x2="49" y2="74" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="57" y1="66" x2="57" y2="74" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    {/* Left pins */}
+    <line x1="24" y1="33" x2="16" y2="33" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="24" y1="41" x2="16" y2="41" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="24" y1="49" x2="16" y2="49" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="24" y1="57" x2="16" y2="57" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    {/* Right pins */}
+    <line x1="66" y1="33" x2="74" y2="33" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="66" y1="41" x2="74" y2="41" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="66" y1="49" x2="74" y2="49" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    <line x1="66" y1="57" x2="74" y2="57" stroke="#1c1c13" strokeWidth="2" strokeLinecap="round"/>
+    {/* Pin 1 marker */}
+    <circle cx="27" cy="27" r="2" fill="#1c1c13" opacity="0.4"/>
+  </svg>
+);
 
 // ── Main Page ──────────────────────────────────────────────────────────────────
 
@@ -112,12 +153,8 @@ export default function ResultsPage() {
 
             {/* "Why this fits you" narrative block */}
             <div className="bg-cream-dark border border-ink p-[33px] relative overflow-hidden flex flex-col gap-4">
-              {/* Decorative brain/gear icon */}
-              <img
-                alt=""
-                src={imgBrainIcon}
-                className="absolute top-0 right-0 h-[69px] w-[67px] object-cover pointer-events-none opacity-30"
-              />
+              {/* Decorative fit icon */}
+              <FitIcon />
 
               <h2 className="font-display font-normal text-[28px] leading-[42px] text-ink">
                 Why this fits you
@@ -206,11 +243,7 @@ export default function ResultsPage() {
               {/* Status row */}
               <div className="flex items-start gap-4">
                 <div className="border border-ink w-[90px] h-[90px] shrink-0 overflow-hidden relative">
-                  <img
-                    alt=""
-                    src={imgCircuitBoard}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
+                  <ChipThumb />
                   <div className="absolute inset-0 bg-white mix-blend-saturation" />
                 </div>
                 <div className="flex flex-col gap-2">
